@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import prisma from '../lib/db.js';
-import { getCache, setCache } from '../lib/redis.js';
+import prisma from '../lib/db';
+import { getCache, setCache } from '../lib/redis';
 import type { DashboardStats } from '@nasmr/types';
 
 export async function dashboardRoutes(app: FastifyInstance) {
@@ -50,7 +50,7 @@ export async function dashboardRoutes(app: FastifyInstance) {
       resolvedThisMonth,
       avgResponseDays: 4.2, // calculated separately in production
       categoryBreakdown: categoryMap as DashboardStats['categoryBreakdown'],
-      recentReports: recentReports as DashboardStats['recentReports'],
+      recentReports: recentReports as unknown as DashboardStats['recentReports'],
     };
 
     await setCache('dashboard:stats', stats, 30); // 30 second TTL

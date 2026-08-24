@@ -1,8 +1,8 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
-import prisma from '../lib/db.js';
-import { analyzeReport, transcribeAudio } from '../lib/ai-client.js';
-import { invalidateCache } from '../lib/redis.js';
+import prisma from '../lib/db';
+import { analyzeReport, transcribeAudio } from '../lib/ai-client';
+import { invalidateCache } from '../lib/redis';
 
 const CreateReportSchema = z.object({
   text: z.string().min(10, 'Report must be at least 10 characters'),
