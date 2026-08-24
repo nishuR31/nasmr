@@ -5,18 +5,20 @@ FROM oven/bun:1 as builder
 
 WORKDIR /app
 
-# Copy package and lock files
+# Copy root workspace config
 COPY package.json ./
+COPY bun.lockb* ./
 
-# Install dependencies
+# Copy packages (types) and the specific app we want to build
+COPY packages/ ./packages/
+COPY apps/api/ ./apps/api/
+
+# Install dependencies at the workspace root
 RUN bun install
 
-# Copy Prisma schema and generate client
-COPY prisma ./prisma
+# Generate Prisma Client
+WORKDIR /app/apps/api
 RUN bunx prisma generate
-
-# Copy application source code
-COPY src ./src
 
 # ==========================================
 # Consumer Stage (Runner)
@@ -25,12 +27,10 @@ FROM oven/bun:1-slim
 
 WORKDIR /app
 
-# Copy node_modules (including generated Prisma Client)
-COPY --from=builder /app/node_modules ./node_modules
+# Copy everything from the builder stage (maintains monorepo symlinks)
+COPY --from=builder /app /app
 
-# Copy package config and source code
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/src ./src
+WORKDIR /app/apps/api
 
 # Set default environment variables
 ENV NODE_ENV=production

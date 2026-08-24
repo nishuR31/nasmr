@@ -34,7 +34,7 @@ WORKDIR /app
 
 # Install only runtime system dependencies (GDAL and GEOS)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgdal32 \
+    libgdal36 \
     libgeos-c1v5 \
     && rm -rf /var/lib/apt/lists/*
 
