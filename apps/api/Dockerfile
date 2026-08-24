@@ -20,12 +20,14 @@ RUN bun install
 WORKDIR /app/apps/api
 RUN bunx prisma generate
 
-# Return to workspace root so Bun finds node_modules from /app/node_modules
-WORKDIR /app
+# Run from apps/api so Bun picks up tsconfig.json for correct module resolution.
+# Packages are resolved via workspace: /app/node_modules is accessible because
+# bun install created symlinks in /app/apps/api/node_modules.
+WORKDIR /app/apps/api
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
 EXPOSE 3000
 
-CMD ["bun", "run", "apps/api/src/index.ts"]
+CMD ["bun", "run", "src/index.ts"]

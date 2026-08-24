@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import prisma from '../lib/db';
+import prisma from '../lib/db.ts';
 
 export async function recommendationsRoutes(app: FastifyInstance) {
   app.get('/', async (req: FastifyRequest, reply: FastifyReply) => {
