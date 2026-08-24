@@ -2,7 +2,7 @@
  * Seed script — generates ~500 realistic reports around Ranchi, Jharkhand
  * Run: bun run seed
  */
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, ReportCategory, ReportStatus, HotspotSeverity } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -84,10 +84,10 @@ async function main() {
 
     reportData.push({
       text: template.text,
-      category: template.category as never,
+      category: template.category as ReportCategory,
       severity,
       urgency: severity * (0.8 + Math.random() * 0.2),
-      status: Math.random() > 0.2 ? 'ANALYZED' : 'PENDING' as never,
+      status: (Math.random() > 0.2 ? 'ANALYZED' : 'PENDING') as ReportStatus,
       latitude: lat,
       longitude: lng,
       address: `${cluster.name}, Ranchi, Jharkhand`,
@@ -108,8 +108,8 @@ async function main() {
       return prisma.hotspot.create({
         data: {
           name: `${cluster.name} Zone`,
-          category: categories[i % categories.length] as never,
-          severity: i < 2 ? 'CRITICAL' : i < 4 ? 'HIGH' : 'MEDIUM' as never,
+          category: categories[i % categories.length] as ReportCategory,
+          severity: (i < 2 ? 'CRITICAL' : i < 4 ? 'HIGH' : 'MEDIUM') as HotspotSeverity,
           reportCount: Math.floor(Math.random() * 200) + 50,
           affectedPop: Math.floor(Math.random() * 5000) + 1000,
           centerLat: cluster.center.lat,
