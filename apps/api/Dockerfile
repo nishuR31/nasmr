@@ -31,7 +31,6 @@ WORKDIR /app
 # Root workspace config — Bun needs this to understand the monorepo
 # and resolve packages from /app/node_modules when running inside apps/api
 COPY --from=builder /app/package.json           ./package.json
-COPY --from=builder /app/bun.lockb              ./bun.lockb
 
 # Copy ONLY what is needed to run — no build tools, no bloat
 COPY --from=builder /app/node_modules           ./node_modules
