@@ -1,0 +1,22 @@
+# Ignore heavy directories from the build context
+node_modules
+**/node_modules
+
+# Python virtual environments
+.venv
+**/.venv
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+
+# Other apps not needed to build the api
+apps/web
+apps/ai
+
+# Git & IDE
+.git
+.gitignore
+.env
+**/.env
+*.md

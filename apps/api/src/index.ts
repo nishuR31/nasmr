@@ -4,12 +4,12 @@ import helmet from '@fastify/helmet';
 import jwt from '@fastify/jwt';
 import rateLimit from '@fastify/rate-limit';
 
-import { reportsRoutes } from './routes/reports.ts';
-import { hotspotsRoutes } from './routes/hotspots.ts';
-import { dashboardRoutes } from './routes/dashboard.ts';
-import { mapRoutes } from './routes/map.ts';
-import { recommendationsRoutes } from './routes/recommendations.ts';
-import { authRoutes } from './routes/auth.ts';
+import { reportsRoutes } from './routes/reports';
+import { hotspotsRoutes } from './routes/hotspots';
+import { dashboardRoutes } from './routes/dashboard';
+import { mapRoutes } from './routes/map';
+import { recommendationsRoutes } from './routes/recommendations';
+import { authRoutes } from './routes/auth';
 
 const app = Fastify({ logger: { level: 'info' } });
 

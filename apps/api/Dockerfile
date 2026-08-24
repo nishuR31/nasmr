@@ -1,22 +1,23 @@
 # ==========================================
 # Builder Stage
 # ==========================================
-FROM oven/bun:1 as builder
+FROM oven/bun:1 AS builder
 
 WORKDIR /app
 
-# Copy root workspace config
-COPY package.json ./
-COPY bun.lockb* ./
+# Copy workspace config first for layer caching
+COPY package.json bun.lockb* ./
 
-# Copy packages (types) and the specific app we want to build
+# Copy shared packages (provides @nasmr/types)
 COPY packages/ ./packages/
+
+# Copy the API app source
 COPY apps/api/ ./apps/api/
 
-# Install dependencies at the workspace root
-RUN bun install
+# Install all workspace dependencies at monorepo root
+RUN bun install --frozen-lockfile
 
-# Generate Prisma Client
+# Generate Prisma client (needs schema + node_modules)
 WORKDIR /app/apps/api
 RUN bunx prisma generate
 
@@ -27,16 +28,18 @@ FROM oven/bun:1-slim
 
 WORKDIR /app
 
-# Copy everything from the builder stage (maintains monorepo symlinks)
-COPY --from=builder /app /app
+# Copy ONLY what is needed to run — no build tools, no bloat
+COPY --from=builder /app/node_modules           ./node_modules
+COPY --from=builder /app/packages               ./packages
+COPY --from=builder /app/apps/api/src           ./apps/api/src
+COPY --from=builder /app/apps/api/prisma        ./apps/api/prisma
+COPY --from=builder /app/apps/api/package.json  ./apps/api/package.json
 
 WORKDIR /app/apps/api
 
-# Set default environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
 
 EXPOSE 3000
 
-# Run the API server
 CMD ["bun", "run", "src/index.ts"]
