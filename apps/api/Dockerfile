@@ -39,11 +39,11 @@ COPY --from=builder /app/apps/api/src           ./apps/api/src
 COPY --from=builder /app/apps/api/prisma        ./apps/api/prisma
 COPY --from=builder /app/apps/api/package.json  ./apps/api/package.json
 
-WORKDIR /app/apps/api
-
+# Stay at workspace root so Bun resolves node_modules from /app/node_modules
 ENV NODE_ENV=production
 ENV PORT=3000
 
 EXPOSE 3000
 
-CMD ["bun", "run", "src/index.ts"]
+# Run from workspace root — avoids Bun v1.4 monorepo traversal issues
+CMD ["bun", "run", "apps/api/src/index.ts"]
