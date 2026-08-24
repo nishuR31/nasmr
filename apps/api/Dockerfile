@@ -32,12 +32,19 @@ WORKDIR /app
 # and resolve packages from /app/node_modules when running inside apps/api
 COPY --from=builder /app/package.json           ./package.json
 
-# Copy ONLY what is needed to run — no build tools, no bloat
+# Root node_modules (all packages)
 COPY --from=builder /app/node_modules           ./node_modules
 COPY --from=builder /app/packages               ./packages
+
+# API app source, schema, config
 COPY --from=builder /app/apps/api/src           ./apps/api/src
 COPY --from=builder /app/apps/api/prisma        ./apps/api/prisma
 COPY --from=builder /app/apps/api/package.json  ./apps/api/package.json
+
+# Bun workspace symlinks — Bun resolves packages by walking up from the file's
+# directory. apps/api/node_modules contains symlinks into /app/node_modules,
+# which is the bridge Bun needs when starting from apps/api/src/
+COPY --from=builder /app/apps/api/node_modules  ./apps/api/node_modules
 
 # Stay at workspace root so Bun resolves node_modules from /app/node_modules
 ENV NODE_ENV=production
