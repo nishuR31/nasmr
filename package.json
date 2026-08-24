@@ -1,0 +1,21 @@
+{
+  "name": "nasmr",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"bun run dev:api\" \"bun run dev:web\"",
+    "dev:api": "cd apps/api && bun run dev",
+    "dev:web": "cd apps/web && bun run dev",
+    "dev:ai": "cd apps/ai && uvicorn main:app --reload --port 8000",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "seed": "cd apps/api && bun run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -1,0 +1,134 @@
+// This is your Prisma schema file.
+// Run: bunx prisma db push  (dev)  or  bunx prisma migrate dev
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  role      Role     @default(CITIZEN)
+  password  String
+  reports   Report[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+enum Role {
+  CITIZEN
+  OFFICIAL
+  ADMIN
+}
+
+model Report {
+  id         String         @id @default(uuid())
+  userId     String?        @map("user_id")
+  user       User?          @relation(fields: [userId], references: [id])
+  text       String
+  category   ReportCategory @default(OTHER)
+  severity   Float          @default(0.5)
+  urgency    Float          @default(0.5)
+  status     ReportStatus   @default(PENDING)
+  latitude   Float
+  longitude  Float
+  address    String?
+  imageUrl   String?        @map("image_url")
+  createdAt  DateTime       @default(now()) @map("created_at")
+  updatedAt  DateTime       @updatedAt @map("updated_at")
+  aiAnalysis AIAnalysis?
+
+  @@map("reports")
+}
+
+enum ReportCategory {
+  WATER
+  ROAD
+  ELECTRICITY
+  SANITATION
+  HEALTHCARE
+  EDUCATION
+  TRANSPORT
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  ANALYZING
+  ANALYZED
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+model AIAnalysis {
+  id         String         @id @default(uuid())
+  reportId   String         @unique @map("report_id")
+  report     Report         @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  category   ReportCategory
+  severity   Float
+  urgency    Float
+  summary    String
+  entities   String[]
+  confidence Float          @default(0)
+  rawLlm     Json?          @map("raw_llm")
+  createdAt  DateTime       @default(now()) @map("created_at")
+
+  @@map("ai_analyses")
+}
+
+model Hotspot {
+  id              String           @id @default(uuid())
+  name            String
+  category        ReportCategory
+  severity        HotspotSeverity  @default(MEDIUM)
+  reportCount     Int              @default(0) @map("report_count")
+  affectedPop     Int              @default(0) @map("affected_pop")
+  centerLat       Float            @map("center_lat")
+  centerLng       Float            @map("center_lng")
+  priorityScore   Float            @default(0) @map("priority_score")
+  firstSeen       DateTime         @default(now()) @map("first_seen")
+  lastUpdated     DateTime         @updatedAt @map("last_updated")
+  recommendations Recommendation[]
+
+  @@map("hotspots")
+}
+
+enum HotspotSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model Recommendation {
+  id            String  @id @default(uuid())
+  hotspotId     String  @map("hotspot_id")
+  hotspot       Hotspot @relation(fields: [hotspotId], references: [id], onDelete: Cascade)
+  title         String
+  description   String
+  action        String
+  priorityScore Float   @default(0) @map("priority_score")
+  evidence      Json    @default("{}")
+  status        RecommendationStatus @default(OPEN)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("recommendations")
+}
+
+enum RecommendationStatus {
+  OPEN
+  ACCEPTED
+  IN_PROGRESS
+  DONE
+}

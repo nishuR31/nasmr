@@ -1,0 +1,145 @@
+@import 'maplibre-gl/dist/maplibre-gl.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design Tokens ──────────────────────────────────────── */
+:root {
+  --brand: #6C63FF;
+  --brand-glow: rgba(108, 99, 255, 0.4);
+  --surface: #111118;
+  --card: #18181f;
+  --border: rgba(255, 255, 255, 0.08);
+  --text-primary: #f0f0ff;
+  --text-secondary: #9898b0;
+  --text-muted: #5a5a70;
+}
+
+/* ─── Base ───────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: #0a0a0f;
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+/* ─── Glass card ────────────────────────────────────────── */
+.glass {
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.glass-hover {
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.glass-hover:hover {
+  background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
+  border-color: rgba(108, 99, 255, 0.3);
+  box-shadow: 0 0 24px rgba(108, 99, 255, 0.1);
+}
+
+/* ─── Glow button ───────────────────────────────────────── */
+.btn-brand {
+  background: linear-gradient(135deg, #6C63FF, #8b80ff);
+  border: 1px solid rgba(108, 99, 255, 0.5);
+  color: white;
+  font-weight: 600;
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.625rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(108, 99, 255, 0.3);
+}
+.btn-brand:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 30px rgba(108, 99, 255, 0.5);
+}
+.btn-brand:active {
+  transform: translateY(0);
+}
+
+/* ─── Severity indicator ────────────────────────────────── */
+.severity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ─── Map container ─────────────────────────────────────── */
+.map-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+/* ─── Category badge ────────────────────────────────────── */
+.cat-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+/* ─── Score bar ──────────────────────────────────────────── */
+.score-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.score-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #6C63FF, #8b80ff);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Stat counter animation ─────────────────────────────── */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-count { animation: count-up 0.6s ease-out forwards; }
+
+/* ─── Live pulse dot ─────────────────────────────────────── */
+.live-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+}
+.live-dot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.live-dot::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+@keyframes ping {
+  75%, 100% { transform: scale(2.5); opacity: 0; }
+}
