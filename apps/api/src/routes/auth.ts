@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import bcrypt from 'bcrypt';
-import prisma from '../lib/db';
+import prisma from '../lib/db.ts';
 
 export async function authRoutes(app: FastifyInstance) {
   // POST /api/auth/login

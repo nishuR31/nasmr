@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import prisma from '../lib/db';
-import { getCache, setCache } from '../lib/redis';
+import prisma from '../lib/db.ts';
+import { getCache, setCache } from '../lib/redis.ts';
 
 export async function hotspotsRoutes(app: FastifyInstance) {
   // GET /api/hotspots
